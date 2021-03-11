@@ -1,0 +1,5 @@
+- Need to write some basic password handling using hashlib. Annoyingly Mongoengine doesn't have a built in for this...
+    - Maybe take a second look at hooking the password hashing into the pre_save signals on the User model, but it's not clear how to tell if the password changed.
+- Add user registration
+- Add post display
+- Add Post creation - but only when logged in.
