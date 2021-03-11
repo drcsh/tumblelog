@@ -1,0 +1,48 @@
+version: '3'
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: tumblog-dockerfile
+    container_name: tumblog-flask
+    restart: unless-stopped
+    environment:
+      APP_ENV: "dev"
+      APP_DEBUG: "True"
+      APP_PORT: 5000
+      FLASK_SECRET_KEY: "${FLASK_SECRET_KEY}"
+      MONGODB_DATABASE: flaskdb
+      MONGODB_USERNAME: "${FLASK_DB_USER}"
+      MONGODB_PASSWORD: "${FLASK_DB_PASSWORD}"
+      MONGODB_HOSTNAME: mongodb
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/opt
+    depends_on:
+      - mongodb
+    networks:
+      - shared
+  mongodb:
+    image: mongo:4.0.8
+    container_name: tumblog-mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${DB_USER}"
+      MONGO_INITDB_ROOT_PASSWORD: "${DB_PASS}"
+      MONGO_INITDB_DATABASE: flaskdb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - shared
+volumes:
+  mongodbdata:
+    driver: local
+  appdata:
+    driver: local
+networks:
+  shared:
+    driver: bridge
